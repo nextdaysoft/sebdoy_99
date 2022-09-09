@@ -36,7 +36,8 @@ class _FeedState extends State<Feed> {
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             // snapshot.data!.docs.length
             return snapshot.data == null ?
-            SizedBox() :
+            const SizedBox()
+                :
             ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) => Posts(

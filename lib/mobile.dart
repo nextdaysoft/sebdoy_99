@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'restart_widget.dart';
 import 'tab_options.dart';
 
 import 'add.dart';
@@ -22,22 +25,26 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   int nn = 2;
   late PageController pageController;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  bool isLoading = true;
+  bool isLoading = false;
   var durationInDay = 0;
+  var oldDurationInDay = 0;
   var durationForMinutes = 0;
   var durationForHours = 0;
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
     _getStartTime();
+    _startTimer();
   }
 
   @override
   void dispose() {
     super.dispose();
     pageController.dispose();
+    timer?.cancel();
   }
 
   void navigationTapped(int page) {
@@ -47,6 +54,13 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   void onPageChanged(int page) {
     setState(() {
       _page = page;
+    });
+  }
+
+  _startTimer(){
+    timer = Timer.periodic(const Duration(minutes: 1), (Timer t){
+      //
+      _getStartTime();
     });
   }
 
@@ -122,6 +136,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         var dateNow = DateTime.now();
         var duration = dateNow.difference(dateTime);
         var _dd = duration.inDays;
+        //set old duration
+
         durationInDay = _dd;
         if(_dd < 60){
           setState(() {
@@ -159,6 +175,17 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           }
         }
 
+
+        //checking duration changes
+        if(oldDurationInDay != 0) {
+          if(oldDurationInDay != durationInDay) {
+            if(oldDurationInDay < durationInDay) {
+              RestartWidget.restartApp(context);
+            }
+          }
+        }
+
+        oldDurationInDay = durationInDay;
        // print('duration.inDays ${duration.inDays}');
 
       });
