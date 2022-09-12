@@ -81,7 +81,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           onPageChanged: onPageChanged,
           children: [
             Feed(durationInDay: durationInDay),
-            Feed2(durationForMinutes: durationForMinutes,durationForHours: durationForHours),
+            Feed2(),
             AddPost(durationInDay: durationInDay)
           ],
         ),
